@@ -5,6 +5,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+
 # Create your models here.
 
 class UserProfileManager(BaseUserManager):
@@ -60,7 +61,15 @@ class User_Profile(AbstractBaseUser,PermissionsMixin):
         """ return string represtentation of our user"""
         return self.email
 
+class snippet(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100, blank=True, default='')
+    code = models.TextField()
+    linenos = models.BooleanField(default=False)
 
+
+    def __str__(self):
+        return self.title
 #
 # from django.db import models
 # from django.contrib.auth.models import (
