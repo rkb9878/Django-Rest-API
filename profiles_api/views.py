@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
 
 from profiles_api.models import snippet
 from profiles_api import serializers
@@ -132,3 +134,8 @@ class snippetView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handling creating user Authentication Token"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
