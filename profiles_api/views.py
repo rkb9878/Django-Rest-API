@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-
+from rest_framework import filters
 
 from profiles_api.models import snippet
 from profiles_api import serializers
@@ -11,7 +11,6 @@ from profiles_api import models
 from rest_framework.authentication import TokenAuthentication
 
 from profiles_api import permissions
-
 
 
 class HelloApiView(APIView):
@@ -31,12 +30,12 @@ class HelloApiView(APIView):
 
         return Response({'message': 'Hello!', 'an_apiView': an_apiView})
 
-    def post(self, request,format=None):
+    def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
-            mobile=serializer.validated_data.get('mobile')
+            mobile = serializer.validated_data.get('mobile')
 
             message = f"Hello {name} and mobile no is {mobile}"
             return Response({'message': message})
@@ -46,16 +45,17 @@ class HelloApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    def put(self,request,pk=None):
+    def put(self, request, pk=None):
         """Handel updating an object"""
-        return Response({'Method':'PUT'})
-    def patch(self,request,pk=None):
-        """Handling partial update of an object"""
-        return Response({'Method':'patch'})
+        return Response({'Method': 'PUT'})
 
-    def delete(self,request,pk=None):
+    def patch(self, request, pk=None):
+        """Handling partial update of an object"""
+        return Response({'Method': 'patch'})
+
+    def delete(self, request, pk=None):
         """Delete an object"""
-        return Response({'method':'Delete'})
+        return Response({'method': 'Delete'})
 
 
 class HelloViewSet(viewsets.ViewSet):
@@ -63,48 +63,48 @@ class HelloViewSet(viewsets.ViewSet):
 
     serializer_class = serializers.helloSerializer
 
-    def list(self,request):
+    def list(self, request):
         """Return hello message"""
-        a_viewSet=[
+        a_viewSet = [
             'using Action (list, create, retrive, update, partial_update, destroy',
             'Automatically maps to urls using routing',
             'Providing more Functionality with less code',
         ]
 
-        return Response({'message':"Hello !!!!",'a_viewset':a_viewSet})
+        return Response({'message': "Hello !!!!", 'a_viewset': a_viewSet})
 
-    def create(self,request):
+    def create(self, request):
         """Create a new Hello message"""
-        serializer=self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            name=serializer.validated_data.get('name')
-            mobile=serializer.validated_data.get('mobile')
+            name = serializer.validated_data.get('name')
+            mobile = serializer.validated_data.get('mobile')
 
-            message=f"hello {name} and mobile number is {mobile}"
+            message = f"hello {name} and mobile number is {mobile}"
 
-            return Response({'message':message})
+            return Response({'message': message})
         else:
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    def retrieve(self,request,pk=None):
+    def retrieve(self, request, pk=None):
         """Handling getting an object by its ID"""
-        return Response({'Http_method':'GET'})
+        return Response({'Http_method': 'GET'})
 
-    def update(self,request,pk=None):
+    def update(self, request, pk=None):
         """Handling update and object by its ID"""
         return Response({"Http_methot": 'PUT'})
 
-    def partial_update(self,request,pk=None):
+    def partial_update(self, request, pk=None):
         """Handling partial update of an object"""
-        return Response({'Http_method':'PATCH'})
+        return Response({'Http_method': 'PATCH'})
 
-    def destroy(self,request,pk=None):
+    def destroy(self, request, pk=None):
         """Handling remove an object"""
-        return Response({'Http_method':'Delete'})
+        return Response({'Http_method': 'Delete'})
 
 
 class userProfileViewSet(viewsets.ModelViewSet):
@@ -113,14 +113,15 @@ class userProfileViewSet(viewsets.ModelViewSet):
     queryset = models.User_Profile.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.UpdateOwnProfiele,)
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (permissions.UpdateOwnProfiele,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
 
 
 class snippetView(APIView):
-    serializer_class=serializers.SnippetSerializer
+    serializer_class = serializers.SnippetSerializer
     """serializer_class this word is a keyword so write it same """
-    def get(self,request,format=None):
+
+    def get(self, request, format=None):
         snippets = snippet.objects.all()
         serializer = serializers.SnippetSerializer(snippets, many=True)
         return Response(serializer.data)
