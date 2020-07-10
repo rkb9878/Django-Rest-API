@@ -5,10 +5,14 @@ from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from profiles_api.models import snippet
 from profiles_api import serializers
 from profiles_api import models
+
+
 
 from rest_framework.authentication import TokenAuthentication
 
@@ -118,6 +122,17 @@ class userProfileViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',)
 
+class UserProfileFeedSet(viewsets.ModelViewSet):
+    """Handling Creating, reading and updating profile feed Items"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (permissions.UPdateOwnStatus, IsAuthenticated )
+
+
+    def perform_create(self, serializer):
+        """sets the user Profile to logged in user"""
+        serializer.save(user_profile=self.request.user)
 
 class snippetView(APIView):
     serializer_class = serializers.SnippetSerializer
