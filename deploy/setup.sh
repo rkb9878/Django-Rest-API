@@ -40,4 +40,4 @@ rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
 systemctl restart nginx.service
 
-echo "DONE! :)"
+echo "DONE! :) "
